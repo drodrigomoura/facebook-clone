@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+### PHP Container #########################################
+  fbphp:
+    container_name: fb_php
+    hostname: fb_php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www/html/app
+    volumes:
+      - .:/var/www/html/app
+    depends_on:
+      - fbdb
+
+  ### NGINX Container #########################################
+  fbnginx:
+    container_name: fb_nginx
+    hostname: fb_nginx
+    image: nginx:1.17
+    restart: unless-stopped
+    depends_on: 
+      - fbphp
+    ports:
+      - 5003:80
+    volumes:
+      - .:/var/www/html/app
+      - ./docker/virtualhost.conf:/etc/nginx/conf.d/default.conf
+
+### POSTGRESS Container #########################################
+  fbdb:
+    container_name: fb_db
+    hostname: fb_db
+    image: postgres:11
+    restart: always
+    environment:
+      POSTGRES_DB: fb
+      POSTGRES_USER: fb-user
+      POSTGRES_PASSWORD: secret
+      PGPASSWORD: secret
+    ports:
+      - '54324:5432'
