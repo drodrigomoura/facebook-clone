@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Post extends JsonResource
@@ -19,6 +20,7 @@ class Post extends JsonResource
                 'type' => 'posts',
                 'post_id' => $this->id,
                 'attributes' => [
+                    'posted_by' => new ResourcesUser($this->user),
                     'body' => $this->body,
                 ]
             ],

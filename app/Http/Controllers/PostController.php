@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PostCollection;
-use App\Http\Resources\PostResource;
-use App\Post;
+use App\Http\Resources\Post as ResourcesPost;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function index()
-    {
-        return new PostCollection(Post::all());
+    {   
+        return new PostCollection(request()->user()->posts);
     }
 
     public function store()
@@ -20,8 +19,7 @@ class PostController extends Controller
             'data.attributes.body' => '',
         ]);
 
-        // $post = Post::create($data);
         $post = request()->user()->posts()->create($data['data']['attributes']);
-        return new PostResource($post);
+        return new ResourcesPost($post);
     }
 }
